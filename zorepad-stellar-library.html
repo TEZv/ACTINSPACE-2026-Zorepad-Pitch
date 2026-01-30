@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOREPAD Stellar Library - ActInSpace 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-base: #0a0e27;
+            --bg-elevated: #0f172a;
+            --bg-surface: #1e293b;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --accent-cyan: #38bdf8;
+            --accent-lime: #00FF41;
+            --accent-orange: #fb923c;
+            --accent-purple: #9333EA;
+            --accent-gold: #fbbf24;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 120px;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: bold;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .glow-cyan {
+            text-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
+        }
+
+        .glow-lime {
+            text-shadow: 0 0 40px rgba(0, 255, 65, 0.6);
+        }
+
+        .glow-orange {
+            text-shadow: 0 0 40px rgba(251, 146, 60, 0.6);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(56, 189, 248, 0.2);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-lime), var(--accent-orange));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* Slide 1: Title */
+        #slide-1 {
+            background: linear-gradient(rgba(10, 14, 39, 0.85), rgba(10, 14, 39, 0.85)), 
+                        url('https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1920&h=1080&fit=crop') center/cover;
+        }
+
+        .logo-emoji {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .tag-box {
+            display: inline-block;
+            padding: 12px 24px;
+            border: 2px solid var(--accent-lime);
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-lime);
+            margin: 30px 0;
+        }
+
+        .team-info {
+            position: absolute;
+            bottom: 40px;
+            font-size: 18px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .date-info {
+            font-size: 16px;
+            color: #64748b;
+            margin-top: 10px;
+        }
+
+        /* Grid layouts */
+        .grid-2x2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 40px;
+        }
+
+        .grid-3-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .icon-large {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .card-content {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .card-footer {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .banner {
+            width: 100%;
+            max-width: 1400px;
+            padding: 20px 40px;
+            border-radius: 16px;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .banner-cyan {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .banner-lime {
+            background: rgba(0, 255, 65, 0.15);
+            border: 2px solid var(--accent-lime);
+            color: var(--accent-lime);
+        }
+
+        /* Circuit pattern background */
+        .circuit-pattern {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(148, 163, 184, 0.05) 35px, rgba(148, 163, 184, 0.05) 36px),
+                repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(148, 163, 184, 0.05) 35px, rgba(148, 163, 184, 0.05) 36px);
+        }
+
+        /* Hardware layout */
+        .hardware-layout {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .hardware-visual {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hardware-specs {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .spec-card {
+            padding: 25px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 16px;
+        }
+
+        .spec-card.highlight {
+            border: 2px solid rgba(251, 146, 60, 0.4);
+            background: rgba(251, 146, 60, 0.05);
+            box-shadow: 0 0 30px rgba(251, 146, 60, 0.2);
+        }
+
+        .spec-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .spec-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .spec-item {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-left: 20px;
+        }
+
+        .radiation-box {
+            padding: 12px 16px;
+            background: rgba(251, 146, 60, 0.1);
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .radiation-title {
+            font-size: 16px;
+            color: var(--accent-orange);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .image-overlay {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        .hardware-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            border: 2px solid rgba(56, 189, 248, 0.5);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            object-fit: cover;
+        }
+
+        .overlay-label {
+            position: absolute;
+            padding: 8px 16px;
+            background: rgba(10, 14, 39, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            border-radius: 8px;
+            font-size: 20px;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .overlay-top {
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .overlay-center {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .overlay-bottom {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Stats */
+        .stat-card {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .stat-number {
+            font-size: 72px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 28px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-sublabel {
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        /* Customer cards */
+        .customer-mini-cards {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .customer-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 30px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        /* Architecture diagram */
+        .architecture-container {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+            align-items: center;
+        }
+
+        .arch-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .arch-center {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arch-layer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .arch-hub {
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(0, 255, 65, 0.2));
+            border: 2px solid;
+            border-image: linear-gradient(135deg, var(--accent-cyan), var(--accent-lime)) 1;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.3);
+        }
+
+        .arch-arrow {
+            width: 40px;
+            height: 40px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .patent-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 255, 65, 0.15);
+            border: 1px solid var(--accent-lime);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--accent-lime);
+            margin: 5px 0;
+        }
+
+        /* BMC Grid */
+        .bmc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, auto);
+            gap: 20px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .bmc-block {
+            padding: 25px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 12px;
+        }
+
+        .bmc-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .bmc-value {
+            grid-row: 2 / 4;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(0, 255, 65, 0.2));
+            border: 2px solid rgba(56, 189, 248, 0.4);
+        }
+
+        .bmc-customer {
+            grid-row: 2 / 4;
+        }
+
+        .bmc-cost {
+            grid-column: 1 / 3;
+        }
+
+        .bmc-list {
+            list-style: none;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .bmc-list li:before {
+            content: "✓ ";
+            color: var(--accent-lime);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        /* Financial table */
+        .financial-layout {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .revenue-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+        }
+
+        .revenue-table th,
+        .revenue-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .revenue-table th {
+            color: var(--accent-cyan);
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .revenue-table .total-row {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--text-primary);
+            border-top: 2px solid var(--accent-cyan);
+        }
+
+        .cost-card {
+            padding: 25px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            margin-top: 30px;
+        }
+
+        .growth-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .growth-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .growth-label {
+            width: 100px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .growth-fill {
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Team photos */
+        .team-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .skills-box {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 15px;
+        }
+
+        /* Timeline */
+        .timeline-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 40px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 60px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-lime), var(--accent-cyan), var(--accent-orange));
+        }
+
+        .timeline-phase {
+            position: relative;
+            margin-bottom: 60px;
+            margin-left: 120px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -76px;
+            top: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        .timeline-card {
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            border-left: 4px solid;
+        }
+
+        .timeline-header {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border: 1px solid;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .timeline-list {
+            list-style: none;
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .timeline-list li:before {
+            content: "✅ ";
+            margin-right: 10px;
+        }
+
+        /* Prototype columns */
+        .prototype-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .prototype-highlight {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(56, 189, 248, 0.15));
+            border: 2px solid rgba(0, 255, 65, 0.4);
+        }
+
+        .code-box {
+            padding: 12px 16px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        .demo-box {
+            padding: 15px 20px;
+            background: rgba(0, 255, 65, 0.2);
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        /* Orbit diagram */
+        .orbit-layout {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+            align-items: center;
+        }
+
+        .orbit-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            flex-shrink: 0;
+        }
+
+        .earth {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid var(--accent-cyan);
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
+            overflow: hidden;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            border-radius: 50%;
+            border-style: solid;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .leo-orbit {
+            width: 400px;
+            height: 400px;
+            border: 6px solid var(--accent-lime);
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.8);
+            animation: pulse 3s infinite;
+        }
+
+        .meo-orbit {
+            width: 520px;
+            height: 520px;
+            border: 3px dashed rgba(148, 163, 184, 0.3);
+            opacity: 0.4;
+        }
+
+        .geo-orbit {
+            width: 600px;
+            height: 600px;
+            border: 2px dotted rgba(100, 116, 139, 0.2);
+            opacity: 0.3;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .orbit-label {
+            position: absolute;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: rgba(0, 255, 65, 0.2);
+            border: 2px solid var(--accent-lime);
+            color: var(--accent-lime);
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .orbit-stats {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .orbit-stat-card {
+            padding: 25px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 16px;
+        }
+
+        .orbit-stat-card.highlight {
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid rgba(0, 255, 65, 0.3);
+        }
+
+        /* Contact */
+        .contact-container {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 40px;
+        }
+
+        .contact-left {
+            flex: 1.5;
+        }
+
+        .contact-item {
+            margin-bottom: 20px;
+        }
+
+        .contact-label {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .contact-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--accent-cyan);
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .qr-box {
+            width: 180px;
+            height: 180px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            color: #000;
+        }
+
+        .qr-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .emoji-line {
+            font-size: 72px;
+            margin: 40px 0;
+            letter-spacing: 32px;
+        }
+
+        /* Thank you slide */
+        #slide-14 {
+            background: linear-gradient(rgba(10, 14, 39, 0.85), rgba(10, 14, 39, 0.85)), 
+                        url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1920&h=1080&fit=crop') center/cover;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1600px) {
+            .slide { padding: 60px 80px; }
+            h1 { font-size: 64px; }
+            h2 { font-size: 42px; }
+        }
+
+        @media (max-width: 1200px) {
+            .slide { padding: 40px 60px; }
+            h1 { font-size: 56px; }
+            h2 { font-size: 38px; }
+            .grid-2x2, .grid-3-col { grid-template-columns: 1fr; }
+            .hardware-layout, .architecture-container, .orbit-layout { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- SLIDE 1: TITLE -->
+    <section class="slide" id="slide-1">
+        <div class="logo-emoji">🛰️</div>
+        <h1 style="color: var(--accent-cyan);" class="glow-cyan">ZOREPAD STELLAR LIBRARY</h1>
+        <div class="subtitle">Space Data Hub for LEO Satellite Constellations</div>
+        <div class="tag-box">✅ Built on 18 CNES Patents | ActInSpace 2026</div>
+        <div class="team-info">
+            Team: Oksana Kolisnyk - Illia Zhurbenko - Illia Maksymenko - Anton Rudakovskyi
+            <div class="date-info">January 2026</div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <section class="slide circuit-pattern" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-orange);">⚠️ THE LEO DATA PROBLEM</h2>
+        <div class="subtitle">Focus: LEO Mega-Constellations (200-2000km orbit)</div>
+        
+        <div class="grid-2x2">
+            <div class="glass-card">
+                <div class="icon-large">🔄</div>
+                <h3 class="card-title" style="color: var(--accent-cyan);">Data Duplication</h3>
+                <p class="card-content">Every constellation collects redundant sensor data</p>
+                <div class="card-footer">Example: Starlink, OneWeb, Kuiper</div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large">📡</div>
+                <h3 class="card-title" style="color: var(--accent-orange);">Storage Limitations</h3>
+                <p class="card-content">Ground stations create delays, satellites can't store long-term</p>
+                <div class="card-footer">Need: On-orbit cache storage</div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large">🚫</div>
+                <h3 class="card-title" style="color: var(--accent-red);">No Data Sharing</h3>
+                <p class="card-content">Constellations operate in silos</p>
+                <div class="card-footer">Missed collision warnings, weather blind spots</div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large">⏱️</div>
+                <h3 class="card-title" style="color: var(--accent-gold);">High Latency</h3>
+                <p class="card-content">2-8 hour delays to ground</p>
+                <div class="card-footer">Critical data needs <1min response</div>
+            </div>
+        </div>
+
+        <div class="banner banner-cyan">
+            🎯 Target Market: LEO Commercial Constellations (Starlink, OneWeb, Kuiper, Planet Labs)
+        </div>
+    </section>
+
+    <!-- SLIDE 3: THE SOLUTION -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-lime);" class="glow-lime">✨ ZOREPAD: SPACE DATA HUB + COLLISION PREVENTION</h2>
+        <div class="subtitle">On-Orbit Storage + Autonomous Safety System</div>
+
+        <div class="grid-3-col">
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">💾</div>
+                <h3 style="color: var(--accent-cyan);">Data Storage Hub</h3>
+                <ul style="list-style: none; font-size: 20px; color: var(--text-secondary); line-height: 2;">
+                    <li>• 2TB on-orbit cache using Novachips NN765R</li>
+                    <li>• Radiation-hardened SSD</li>
+                    <li>• Store critical data for LEO constellations</li>
+                </ul>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-lime);">🤖</div>
+                <h3 style="color: var(--accent-lime);">Smart Collision Prevention</h3>
+                <ul style="list-style: none; font-size: 20px; color: var(--text-secondary); line-height: 2;">
+                    <li>• Patent B2203: Autonomous orbit control (ACOA)</li>
+                    <li>• Patent B1349: GNSS confidence index</li>
+                    <li>• Real-time warnings without ground control</li>
+                </ul>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-orange);">🔐</div>
+                <h3 style="color: var(--accent-orange);">Secure & Verified</h3>
+                <ul style="list-style: none; font-size: 20px; color: var(--text-secondary); line-height: 2;">
+                    <li>• TLE format orbital data</li>
+                    <li>• Quality confidence scoring</li>
+                    <li>• Secure data exchange between satellites</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="banner banner-lime">
+            <strong>✅ CNES: 18 Patents Integrated | B2203 (ACOA) - B1349 (GNSS) - B0818 (Compression)</strong>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: PATENT FOUNDATION -->
+    <section class="slide circuit-pattern" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-cyan);">📜 BUILT ON 18 CNES PATENTS</h2>
+        <div class="subtitle">Core Technologies from CNES Innovation Portfolio</div>
+
+        <div class="grid-3-col">
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">💼</div>
+                <h3 style="color: var(--accent-cyan); font-size: 28px;">DATA MANAGEMENT</h3>
+                <div style="margin-top: 20px;">
+                    <ul style="list-style: none; font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        <li><strong>B0818:</strong> Acquisition System for Image Reduction<br/>→ Smart compression (30% bandwidth savings)</li>
+                        <li style="margin-top: 15px;"><strong>B0812:</strong> Process to Retrieve Satellite Data<br/>→ Mesh network architecture</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-lime);">🤖</div>
+                <h3 style="color: var(--accent-lime); font-size: 28px;">AUTONOMOUS SAFETY</h3>
+                <div style="margin-top: 20px;">
+                    <ul style="list-style: none; font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        <li><strong>B2203:</strong> Autonomous Orbit Control (ACOA)<br/>→ Collision avoidance without ground control</li>
+                        <li style="margin-top: 15px;"><strong>B1349:</strong> GNSS Receiver with Confidence Index<br/>→ Data quality scoring (0-100%)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-orange);">🔐</div>
+                <h3 style="color: var(--accent-orange); font-size: 28px;">SECURITY & COMMUNICATION</h3>
+                <div style="margin-top: 20px;">
+                    <ul style="list-style: none; font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        <li><strong>B1629:</strong> Spoofing Detection<br/>→ Signal verification module</li>
+                        <li style="margin-top: 15px;"><strong>B1673:</strong> Two-Factor Authentication<br/>→ Secure client authentication</li>
+                        <li style="margin-top: 15px;"><strong>B0805:</strong> Agile Antenna System<br/>→ Multi-directional communication</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; font-size: 20px; color: var(--text-secondary);">
+            Full list: 18 CNES patents implemented | Core focus: Autonomous operations + secure data storage
+        </div>
+    </section>
+
+    <!-- SLIDE 4.5: HARDWARE PLATFORM -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">🛰️ HARDWARE SPECIFICATIONS - 6U CubeSat Hub</h2>
+
+        <div class="hardware-layout">
+            <div class="hardware-visual">
+                <div class="image-overlay">
+                    <img src="https://images.unsplash.com/photo-1581822261290-991b38693d1b?w=800&h=800&fit=crop" 
+                         alt="CubeSat" 
+                         class="hardware-image">
+                    <div class="overlay-label overlay-top">6U CubeSat (30×20×10cm)</div>
+                    <div class="overlay-label overlay-center">ZOREPAD STORAGE HUB</div>
+                    <div class="overlay-label overlay-bottom">LEO 500-800km Orbit</div>
+                </div>
+            </div>
+
+            <div class="hardware-specs">
+                <div class="spec-card">
+                    <div class="icon-large">📡</div>
+                    <div class="spec-title" style="color: var(--accent-cyan);">AGILE ANTENNAS</div>
+                    <div class="patent-tag">Patent: B0805</div>
+                    <div class="spec-item">• Distributed antenna array</div>
+                    <div class="spec-item">• Continuous communication during maneuvers</div>
+                    <div class="spec-item">• Multi-directional signal reception</div>
+                </div>
+
+                <div class="spec-card highlight">
+                    <div class="icon-large">💾</div>
+                    <div class="spec-title" style="color: var(--accent-orange);">NOVACHIPS NN765R 2TB SSD</div>
+                    <div class="spec-item"><strong>• Capacity:</strong> 2TB (radiation-hardened M.2 SSD)</div>
+                    <div class="spec-item"><strong>• Performance:</strong> Read/write up to 3GB/s</div>
+                    <div class="spec-item"><strong>• Power:</strong> <3W consumption</div>
+                    <div class="spec-item"><strong>• Form:</strong> M.2 80mm dual-side</div>
+                    
+                    <div class="radiation-box">
+                        <div class="radiation-title">🛡️ RADIATION PROTECTION:</div>
+                        <div style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                            • Advanced ECC (Error Correction Code)<br/>
+                            • Firmware recovery & bad sector remapping<br/>
+                            • <strong>Continuous bit error detection & scrubbing</strong><br/>
+                            • Proton flux resistance: 1,000x normal conditions<br/>
+                            • MIL-STD-810G certified
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spec-card">
+                    <div class="icon-large">🧠</div>
+                    <div class="spec-title" style="color: var(--accent-blue);">EDGE COMPUTE</div>
+                    <div class="patent-tag">Patents: B0818, B2203, B1349</div>
+                    <div class="spec-item">• ARM Cortex-A72 quad-core (radiation-tolerant)</div>
+                    <div class="spec-item">• Real-time image compression (B0818)</div>
+                    <div class="spec-item">• Autonomous collision avoidance (B2203)</div>
+                    <div class="spec-item">• Data confidence scoring (B1349)</div>
+                </div>
+
+                <div class="spec-card">
+                    <div class="icon-large">⚡</div>
+                    <div class="spec-title" style="color: var(--accent-lime);">POWER SYSTEM</div>
+                    <div class="spec-item">• Solar panels: 100W generation</div>
+                    <div class="spec-item">• Battery: Li-ion with thermal management</div>
+                    <div class="spec-item">• Power budget: 24/7 operation</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(251, 146, 60, 0.1); color: var(--accent-orange); border: 1px solid rgba(251, 146, 60, 0.3);">
+            <div style="font-size: 20px;">Mass: 12kg | Power: 100W | Storage: 2TB (Novachips NN765R) | Lifetime: 5 years | Cost: ~$650K per unit*</div>
+            <div style="font-size: 16px; margin-top: 8px;">*Bus $260K + Storage $80K + Antennas $120K + Solar $90K + Integration $100K</div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: THE MARKET -->
+    <section class="slide" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-cyan);">💰 THE LEO MARKET</h2>
+
+        <div class="grid-3-col">
+            <div class="stat-card">
+                <div class="stat-number glow-cyan" style="color: var(--accent-cyan);">500+</div>
+                <div class="stat-label">LEO Constellations</div>
+                <div class="stat-sublabel">(200-2000km)</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number glow-orange" style="color: var(--accent-orange);">$127B</div>
+                <div class="stat-label">Market by 2030</div>
+                <div class="stat-sublabel">Data services: $8B</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number glow-lime" style="color: var(--accent-lime);">100+</div>
+                <div class="stat-label">Exabytes/year</div>
+                <div class="stat-sublabel">Data volume</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 60px; text-align: center;">
+            <h3 style="color: var(--accent-cyan); margin-bottom: 30px;">Target Customers</h3>
+            <div class="customer-mini-cards">
+                <div class="customer-card">
+                    <span style="font-size: 48px;">🛰️</span>
+                    <span style="font-size: 24px; color: var(--accent-cyan); margin-top: 10px;">Starlink</span>
+                    <div style="font-size: 16px; color: var(--text-secondary);">5,000+ satellites</div>
+                </div>
+                <div class="customer-card">
+                    <span style="font-size: 48px;">🌐</span>
+                    <span style="font-size: 24px; color: var(--accent-lime); margin-top: 10px;">OneWeb</span>
+                    <div style="font-size: 16px; color: var(--text-secondary);">648 satellites</div>
+                </div>
+                <div class="customer-card">
+                    <span style="font-size: 48px;">🌍</span>
+                    <span style="font-size: 24px; color: var(--accent-orange); margin-top: 10px;">Planet Labs</span>
+                    <div style="font-size: 16px; color: var(--text-secondary);">200+ imaging</div>
+                </div>
+                <div class="customer-card">
+                    <span style="font-size: 48px;">☁️</span>
+                    <span style="font-size: 24px; color: var(--accent-blue); margin-top: 10px;">Kuiper</span>
+                    <div style="font-size: 16px; color: var(--text-secondary);">3,236 planned</div>
+                </div>
+            </div>
+            <div style="margin-top: 30px; font-size: 20px; color: var(--text-secondary);">
+                Business Model: B2G (governments) + B2B (commercial constellations)
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: TECH ARCHITECTURE -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">⚙️ SYSTEM ARCHITECTURE</h2>
+
+        <div class="architecture-container">
+            <div class="arch-column">
+                <div class="glass-card" style="padding: 25px;">
+                    <div style="font-size: 24px; color: var(--accent-cyan); margin-bottom: 15px; font-weight: bold;">BACKEND</div>
+                    <div style="font-size: 16px; color: var(--text-secondary); line-height: 2;">
+                        • C# .NET 8<br/>
+                        • PostgreSQL+PostGIS<br/>
+                        • MinIO (S3-compatible)<br/>
+                        • Redis
+                    </div>
+                </div>
+                <div class="glass-card" style="padding: 25px;">
+                    <div style="font-size: 24px; color: var(--accent-lime); margin-bottom: 15px; font-weight: bold;">INFRASTRUCTURE</div>
+                    <div style="font-size: 16px; color: var(--text-secondary); line-height: 2;">
+                        • Docker containers<br/>
+                        • Kubernetes<br/>
+                        • Edge compute nodes
+                    </div>
+                </div>
+            </div>
+
+            <div class="arch-center">
+                <div class="arch-layer">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🛰️🛰️🛰️</div>
+                    <div style="font-size: 18px; color: var(--accent-cyan);">LEO Satellites<br/>(Starlink, OneWeb)</div>
+                </div>
+                
+                <div class="arch-arrow" style="color: var(--accent-cyan);">↓</div>
+                <div class="patent-tag">TLE format orbital data</div>
+
+                <div class="arch-hub" style="margin: 20px 0;">
+                    <div style="font-size: 56px; margin-bottom: 10px;">🌐</div>
+                    <div style="font-size: 24px; font-weight: bold; color: white;">ZOREPAD HUB</div>
+                    <div style="font-size: 16px; color: var(--text-secondary); margin-top: 8px;">
+                        Storage: Novachips 2TB<br/>
+                        Processing: B2203, B1349, B0818
+                    </div>
+                </div>
+
+                <div class="arch-arrow" style="color: var(--accent-lime);">↓</div>
+                <div class="patent-tag">Collision warnings + Data sync</div>
+
+                <div class="arch-layer">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🏢</div>
+                    <div style="font-size: 18px; color: var(--accent-lime);">Ground Stations<br/>(CNES/ESA)</div>
+                </div>
+
+                <div class="arch-arrow" style="color: var(--accent-cyan);">↓</div>
+
+                <div class="arch-layer">
+                    <div style="font-size: 48px; margin-bottom: 10px;">👥</div>
+                    <div style="font-size: 18px; color: var(--text-secondary);">End Users<br/>(API clients)</div>
+                </div>
+            </div>
+
+            <div class="arch-column">
+                <div class="glass-card" style="padding: 25px;">
+                    <div style="font-size: 24px; color: var(--accent-orange); margin-bottom: 15px; font-weight: bold;">CLIENT</div>
+                    <div style="font-size: 16px; color: var(--text-secondary); line-height: 2;">
+                        • REST API<br/>
+                        • WebSocket<br/>
+                        • Python/JS SDK<br/>
+                        • TLE data format
+                    </div>
+                </div>
+                <div class="glass-card" style="padding: 25px;">
+                    <div style="font-size: 24px; color: var(--accent-purple); margin-bottom: 15px; font-weight: bold;">SECURITY</div>
+                    <div style="font-size: 16px; color: var(--text-secondary); line-height: 2;">
+                        • AES-256<br/>
+                        • OAuth<br/>
+                        • B1629 (spoofing)<br/>
+                        • B1673 (2FA)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 7: BUSINESS MODEL CANVAS -->
+    <section class="slide" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-cyan);">💼 BUSINESS MODEL CANVAS</h2>
+
+        <div class="bmc-grid">
+            <div class="bmc-block">
+                <div class="bmc-title" style="color: var(--accent-cyan);">PARTNERS</div>
+                <ul class="bmc-list">
+                    <li>CNES, ESA</li>
+                    <li>Starlink, OneWeb</li>
+                    <li>Ground station operators</li>
+                </ul>
+            </div>
+
+            <div class="bmc-block">
+                <div class="bmc-title" style="color: var(--accent-lime);">ACTIVITIES</div>
+                <ul class="bmc-list">
+                    <li>Patent implementation</li>
+                    <li>On-orbit storage</li>
+                    <li>Collision monitoring</li>
+                    <li>Data quality verification</li>
+                </ul>
+            </div>
+
+            <div class="bmc-block">
+                <div class="bmc-title" style="color: var(--accent-orange);">RESOURCES</div>
+                <ul class="bmc-list">
+                    <li>18 CNES patents</li>
+                    <li>4-person team</li>
+                    <li>CubeSat hardware design</li>
+                    <li>Novachips partnership</li>
+                </ul>
+            </div>
+
+            <div class="bmc-block bmc-value">
+                <div class="bmc-title" style="font-size: 24px; color: white;">VALUE PROPOSITIONS</div>
+                <ul class="bmc-list" style="font-size: 17px; font-weight: bold; color: white;">
+                    <li>2TB on-orbit storage cache</li>
+                    <li>Autonomous collision prevention</li>
+                    <li><1min data latency</li>
+                    <li>Radiation-hardened reliability</li>
+                </ul>
+            </div>
+
+            <div class="bmc-block">
+                <div class="bmc-title" style="color: var(--accent-purple);">RELATIONSHIPS</div>
+                <ul class="bmc-list">
+                    <li>Enterprise support (24/7)</li>
+                    <li>API portal</li>
+                    <li>SLA guarantees (99.9%)</li>
+                </ul>
+            </div>
+
+            <div class="bmc-block">
+                <div class="bmc-title" style="color: var(--accent-blue);">CHANNELS</div>
+                <ul class="bmc-list">
+                    <li>Direct B2B sales</li>
+                    <li>CNES/ESA partnerships</li>
+                    <li>ActInSpace network</li>
+                </ul>
+            </div>
+
+            <div class="bmc-block bmc-customer">
+                <div class="bmc-title" style="color: var(--accent-lime);">CUSTOMERS</div>
+                <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                    <strong>PRIMARY (B2B):</strong><br/>
+                    Starlink, OneWeb, Kuiper, Planet Labs<br/><br/>
+                    <strong>SECONDARY (B2G):</strong><br/>
+                    CNES (France), ESA (Europe), National space agencies
+                </div>
+            </div>
+
+            <div class="bmc-block bmc-cost">
+                <div class="bmc-title" style="color: var(--accent-red);">COSTS</div>
+                <div style="display: flex; gap: 20px; font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                    <div style="flex: 1;">
+                        • Ground stations: $120K/yr<br/>
+                        • Cloud hosting: $80K/yr<br/>
+                        • CubeSat: $650K one-time
+                    </div>
+                    <div style="flex: 1;">
+                        • Team: $450K/yr<br/>
+                        • R&D: $100K/yr
+                    </div>
+                </div>
+            </div>
+
+            <div class="bmc-block">
+                <div class="bmc-title" style="color: var(--accent-lime);">REVENUE</div>
+                <ul class="bmc-list">
+                    <li>Storage fees: $0.05/GB/mo</li>
+                    <li>Collision warnings: $50K/yr</li>
+                    <li>Data brokerage: 10% comm.</li>
+                    <li>Enterprise API: $50K/yr</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 8: FINANCIALS -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-lime);" class="glow-lime">💵 FINANCIAL PROJECTION</h2>
+
+        <div class="financial-layout">
+            <div style="flex: 1.5;">
+                <h3 style="color: var(--accent-cyan); margin-bottom: 20px;">YEAR 1 REVENUE</h3>
+                
+                <table class="revenue-table">
+                    <thead>
+                        <tr>
+                            <th>REVENUE STREAM</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Storage fees (2 pilot customers)</td>
+                            <td style="color: var(--text-secondary);">$450K</td>
+                        </tr>
+                        <tr>
+                            <td>Collision warning subscriptions</td>
+                            <td style="color: var(--text-secondary);">$360K</td>
+                        </tr>
+                        <tr>
+                            <td>Data brokerage</td>
+                            <td style="color: var(--text-secondary);">$120K</td>
+                        </tr>
+                        <tr>
+                            <td>API access</td>
+                            <td style="color: var(--text-secondary);">$180K</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>TOTAL YEAR 1</td>
+                            <td>$1.11M</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="cost-card">
+                    <div style="font-size: 24px; color: var(--accent-red); margin-bottom: 20px; font-weight: bold;">YEAR 1 COSTS</div>
+                    
+                    <div style="font-size: 16px; color: var(--text-secondary); line-height: 2;">
+                        • Ground stations: $120K<br/>
+                        • Cloud infrastructure: $80K<br/>
+                        • <strong style="color: var(--accent-orange);">CubeSat hardware: $650K one-time</strong><br/>
+                        <span style="margin-left: 20px; font-size: 14px;">
+                            (Bus $260K + Novachips $80K + Antennas $120K + Solar $90K + Integration $100K)
+                        </span><br/>
+                        • Team salaries: $450K<br/>
+                        • R&D & patents: $100K
+                    </div>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--accent-red);">
+                        <div style="font-size: 18px; font-weight: bold; color: var(--accent-red);">
+                            TOTAL YEAR 1: $1.4M
+                        </div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--accent-orange); margin-top: 8px;">
+                            NET Y1: -$290K (satellite capex)
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 16px; color: var(--text-muted); font-style: italic;">
+                    Hardware capex amortized in Y1. Y2+ shows true software margins. Customer pays for storage.
+                </div>
+            </div>
+
+            <div style="flex: 1;">
+                <h3 style="color: var(--accent-cyan); margin-bottom: 20px;">3-YEAR GROWTH</h3>
+                
+                <div class="growth-bars">
+                    <div class="growth-bar">
+                        <div class="growth-label">Year 1</div>
+                        <div class="growth-fill" style="width: 30%; background: linear-gradient(90deg, var(--accent-cyan), #1e90ff);">
+                            $1.11M
+                        </div>
+                    </div>
+                    
+                    <div class="growth-bar">
+                        <div class="growth-label">Year 2</div>
+                        <div class="growth-fill" style="width: 70%; background: linear-gradient(90deg, var(--accent-lime), #00cc33);">
+                            $3.2M
+                        </div>
+                    </div>
+                    
+                    <div class="growth-bar">
+                        <div class="growth-label">Year 3</div>
+                        <div class="growth-fill" style="width: 100%; background: linear-gradient(90deg, var(--accent-orange), #ff6633);">
+                            $7.8M
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-top: 40px; background: rgba(0, 255, 65, 0.1); border: 2px solid var(--accent-lime);">
+                    <div style="font-size: 20px; color: var(--accent-lime); margin-bottom: 15px; font-weight: bold;">PROFIT MARGINS</div>
+                    <div style="font-size: 18px; color: var(--text-primary); line-height: 2;">
+                        <strong>Year 2:</strong> +$2.55M profit<br/>
+                        (no satellite capex)<br/><br/>
+                        <strong>Year 3:</strong> +$7.05M profit
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 9: TEAM -->
+    <section class="slide" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-cyan);">👥 MEET THE TEAM</h2>
+
+        <div class="grid-2x2">
+            <div class="glass-card">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop" 
+                     alt="Oksana" 
+                     class="team-photo" 
+                     style="border: 4px solid var(--accent-cyan); box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);">
+                <h3 style="color: white; font-size: 28px;">👩‍💼 OKSANA KOLISNYK</h3>
+                <div style="font-size: 22px; color: var(--accent-cyan); margin-bottom: 10px;">Project Lead & Business Strategy</div>
+                <div style="font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 15px;">5+ years in aerospace startups</div>
+                <div style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                    Partnerships, fundraising, pitch deck, investor relations
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" 
+                     alt="Illia Z" 
+                     class="team-photo" 
+                     style="border: 4px solid var(--accent-lime); box-shadow: 0 0 30px rgba(0, 255, 65, 0.5);">
+                <h3 style="color: white; font-size: 28px;">👨‍💻 ILLIA ZHURBENKO</h3>
+                <div style="font-size: 22px; color: var(--accent-lime); margin-bottom: 10px;">Lead Developer & Backend Architect</div>
+                <div style="font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 15px;">8+ years C#/.NET development</div>
+                <div style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                    Distributed systems, database architecture, API security<br/>
+                    <strong>Patent implementation:</strong> B2203, B1349, B0818<br/>
+                    <strong>Skills:</strong> C#, PostgreSQL, MinIO, Docker, Kubernetes
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop" 
+                     alt="Illia M" 
+                     class="team-photo" 
+                     style="border: 4px solid var(--accent-orange); box-shadow: 0 0 30px rgba(251, 146, 60, 0.5);">
+                <h3 style="color: white; font-size: 28px;">👨‍🔬 ILLIA MAKSYMENKO</h3>
+                <div style="font-size: 22px; color: var(--accent-orange); margin-bottom: 10px;">Hardware Engineer & Systems Integration</div>
+                <div style="font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 15px;">6+ years in embedded systems</div>
+                <div style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                    CubeSat hardware design, 3D graphics (Vulkan/OpenGL), production deployment<br/>
+                    Hardware validation, customer onboarding<br/>
+                    <strong>Skills:</strong> C++, Python
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=400&h=400&fit=crop" 
+                     alt="Anton" 
+                     class="team-photo" 
+                     style="border: 4px solid var(--accent-purple); box-shadow: 0 0 30px rgba(147, 51, 234, 0.5);">
+                <h3 style="color: white; font-size: 28px;">👨‍🔬 ANTON RUDAKOVSKYI</h3>
+                <div style="font-size: 22px; color: var(--accent-purple); margin-bottom: 10px;">Astrophysicist & Scientific Advisor</div>
+                <div style="font-size: 16px; color: var(--text-muted); font-style: italic; margin-bottom: 15px;">PhD in Astrophysics</div>
+                <div style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                    Patent validation (B2203, B1349), scientific credibility for CNES/ESA<br/>
+                    Business model development<br/>
+                    <strong>Skills:</strong> LaTeX, Python, Wolfram, ML/DL
+                </div>
+            </div>
+        </div>
+
+        <div class="banner banner-cyan" style="margin-top: 40px;">
+            Tech Stack: C# (.NET 8) - Python - C++ - PostgreSQL - PostGIS - MinIO - Docker - Kubernetes - Redis
+        </div>
+    </section>
+
+    <!-- SLIDE 10: ROADMAP -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">🗓️ ROADMAP TO LAUNCH</h2>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-phase">
+                <div class="timeline-dot" style="background: var(--accent-gold); color: white;">🏆</div>
+                <div class="timeline-card" style="border-color: var(--accent-gold);">
+                    <div class="timeline-header" style="color: var(--accent-gold);">
+                        Q1 2026
+                        <span class="timeline-badge" style="border-color: var(--accent-gold); color: var(--accent-gold);">NOW</span>
+                    </div>
+                    <div style="font-size: 24px; color: white; margin: 15px 0;">ActInSpace Competition</div>
+                    <ul class="timeline-list">
+                        <li>Pitch complete (18 CNES patents integrated)</li>
+                        <li>LOIs signed (2 customers)</li>
+                        <li>Hardware design (Novachips partnership)</li>
+                        <li>Advance to international finals</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-phase">
+                <div class="timeline-dot" style="background: var(--accent-lime); color: black;">💰</div>
+                <div class="timeline-card" style="border-color: var(--accent-lime);">
+                    <div class="timeline-header" style="color: var(--accent-lime);">Q2 2026</div>
+                    <div style="font-size: 24px; color: white; margin: 15px 0;">Seed Funding Round</div>
+                    <ul class="timeline-list">
+                        <li>Close $1.5M seed round</li>
+                        <li>Hire 3 additional engineers</li>
+                        <li>Secure ground station partnerships (CNES/ESA)</li>
+                        <li>Finalize patent licensing agreements</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-phase">
+                <div class="timeline-dot" style="background: var(--accent-cyan); color: white;">🛠️</div>
+                <div class="timeline-card" style="border-color: var(--accent-cyan);">
+                    <div class="timeline-header" style="color: var(--accent-cyan);">Q3-Q4 2026</div>
+                    <div style="font-size: 24px; color: white; margin: 15px 0;">Development & Testing</div>
+                    <ul class="timeline-list">
+                        <li>Complete C# backend (B2203, B1349, B0818 implementation)</li>
+                        <li>Beta testing with Planet Labs & OneWeb</li>
+                        <li>CubeSat hardware prototype (Novachips integration)</li>
+                        <li>Security module (B1629, B1673)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-phase">
+                <div class="timeline-dot" style="background: var(--accent-orange); color: white;">🚀</div>
+                <div class="timeline-card" style="border-color: var(--accent-orange);">
+                    <div class="timeline-header" style="color: var(--accent-orange);">Q1 2027</div>
+                    <div style="font-size: 24px; color: white; margin: 15px 0;">Commercial Launch</div>
+                    <ul class="timeline-list">
+                        <li>API v1.0 public launch</li>
+                        <li>First CubeSat deployment (LEO 500-800km)</li>
+                        <li>5 paying customers onboarded</li>
+                        <li>Expand to 10-city ground network</li>
+                        <li>$1.11M ARR achieved</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 11: WORKING PROTOTYPE -->
+    <section class="slide" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-lime);" class="glow-lime">⚡ WORKING PROTOTYPE</h2>
+
+        <div class="prototype-grid">
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">💻</div>
+                <h3 style="color: var(--accent-cyan);">GitHub Repository</h3>
+                <div class="code-box">github.com/Felicitas12/ACTINSPACE-2026-Zorepad</div>
+                
+                <div style="margin-top: 20px; font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                    <strong>18 CNES Patents Implemented:</strong><br/>
+                    • B2203: Collision avoidance (Python)<br/>
+                    • B1349: GNSS confidence scoring (C#)<br/>
+                    • B0818: Image compression (Python ML)<br/>
+                    • B1629/B1673: Security (C#)<br/>
+                    • B0805: Antenna control<br/>
+                    • MinIO S3 storage backend<br/>
+                    • Docker Compose deployment
+                </div>
+
+                <div style="margin-top: 20px; font-size: 16px; color: var(--text-muted);">
+                    Tech: C# .NET 8, PostgreSQL+PostGIS, MinIO, Redis, Docker
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <div class="qr-box">[QR CODE]</div>
+                    <div class="qr-label">Scan for GitHub</div>
+                </div>
+            </div>
+
+            <div class="glass-card prototype-highlight">
+                <div class="icon-large" style="color: var(--accent-lime);">🎬</div>
+                <h3 style="color: var(--accent-lime);">Live Demo</h3>
+                <div style="font-size: 24px; color: white; font-family: 'JetBrains Mono', monospace; margin: 15px 0;">
+                    demo.zorepad.space
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 18px; color: white; line-height: 2;">
+                    <strong>Demo Features:</strong><br/>
+                    🌐 REST API sandbox (upload/download satellite data)<br/>
+                    📊 Real-time collision dashboard (B2203 algorithm)<br/>
+                    📡 TLE format data ingestion<br/>
+                    ⭐ Quality confidence scoring (B1349)
+                </div>
+
+                <div class="demo-box" style="margin-top: 20px;">
+                    <div style="font-size: 15px; color: white; font-weight: bold;">Credentials:</div>
+                    <div style="font-size: 14px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">
+                        actinspace2026 / [judges]
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <div class="qr-box">[QR CODE]</div>
+                    <div class="qr-label">Scan for Demo</div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-orange);">🛰️</div>
+                <h3 style="color: var(--accent-orange);">Hardware Platform</h3>
+                <div style="font-size: 20px; color: var(--text-secondary); margin-bottom: 15px;">6U CubeSat Design</div>
+                
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                    📡 B0805: Agile antenna system<br/><br/>
+                    
+                    <strong style="color: var(--accent-orange); font-size: 20px;">💾 Novachips NN765R 2TB SSD</strong><br/>
+                    → Radiation-hardened, 3GB/s, <3W<br/>
+                    → ECC, firmware recovery, bit error scrubbing<br/>
+                    → 1,000x proton flux resistance<br/><br/>
+                    
+                    🛡️ MIL-STD-810G certified<br/>
+                    🔧 5-year LEO lifetime guarantee
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <img src="https://images.unsplash.com/photo-1581822261290-991b38693d1b?w=400&h=400&fit=crop" 
+                         alt="CubeSat" 
+                         style="width: 100%; border-radius: 12px; border: 2px solid rgba(251, 146, 60, 0.4);">
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; font-size: 18px; color: var(--text-muted);">
+            Open-source (MIT) | Full documentation available | Hardware specs shared with CNES partners
+        </div>
+    </section>
+
+    <!-- SLIDE 12: CALL TO ACTION -->
+    <section class="slide" style="background: linear-gradient(rgba(10, 14, 39, 0.85), rgba(10, 14, 39, 0.85)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop') center/cover;">
+        <h1 style="color: var(--accent-cyan); font-size: 56px;" class="glow-cyan">🚀 PARTNER WITH US</h1>
+        <div class="subtitle">Commercialize Space Data Storage + Collision Prevention</div>
+
+        <div class="grid-3-col">
+            <div class="glass-card">
+                <div class="icon-large">🛰️</div>
+                <h3 style="color: var(--accent-cyan);">Constellation Operators</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    Beta access to Zorepad Hub<br/>
+                    Custom integration for your satellites<br/>
+                    24/7 technical support
+                </div>
+            </div>
+
+            <div class="glass-card prototype-highlight">
+                <div class="icon-large">🏢</div>
+                <h3 style="color: var(--accent-lime);">CNES/ESA Partners</h3>
+                <div style="font-size: 18px; color: white; line-height: 1.8; margin-top: 15px;">
+                    License 18 patents for joint ventures<br/>
+                    Co-development opportunities<br/>
+                    European space collaboration
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large">💼</div>
+                <h3 style="color: var(--accent-orange);">Investors</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    $1.5M seed round (Q2 2026)<br/>
+                    18% equity<br/>
+                    B2G + B2B revenue model<br/>
+                    5-year exit strategy
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-container">
+            <div class="contact-left">
+                <h3 style="color: var(--accent-cyan); margin-bottom: 30px; font-size: 32px;">GET IN TOUCH</h3>
+                
+                <div class="contact-item">
+                    <div class="contact-label">📧 Email</div>
+                    <div class="contact-value">contact@zorepad.space</div>
+                    <div class="contact-value" style="font-size: 20px; margin-top: 5px;">oksana.kolisnyk@zorepad.space</div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-label">💬 Discord</div>
+                    <div class="contact-value">discord.gg/zorepad</div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-label">🔗 Website</div>
+                    <div class="contact-value">zorepad.space</div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-label">🐙 GitHub</div>
+                    <div class="contact-value" style="font-size: 18px;">github.com/Felicitas12/ACTINSPACE-2026-Zorepad</div>
+                </div>
+            </div>
+
+            <div class="qr-container">
+                <div>
+                    <div class="qr-box">[QR: Email]</div>
+                    <div class="qr-label">Scan to Email</div>
+                </div>
+                <div>
+                    <div class="qr-box">[QR: GitHub]</div>
+                    <div class="qr-label">Scan for GitHub</div>
+                </div>
+                <div>
+                    <div class="qr-box">[QR: Discord]</div>
+                    <div class="qr-label">Join Discord</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner banner-lime" style="margin-top: 40px;">
+            <strong>✅ This is a STARTUP, not a hackathon project | 18 CNES Patents ✓ | 2 LOIs ✓ | Working Prototype ✓</strong>
+        </div>
+    </section>
+
+    <!-- SLIDE 13: TARGET ORBIT -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">🎯 WHY LEO? (200-2000km)</h2>
+
+        <div class="orbit-layout">
+            <div class="orbit-container">
+                <div class="orbit-ring geo-orbit"></div>
+                <div class="orbit-ring meo-orbit"></div>
+                <div class="orbit-ring leo-orbit"></div>
+                
+                <div class="earth">
+                    <img src="https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400&h=400&fit=crop" 
+                         alt="Earth" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+
+                <div class="orbit-label">
+                    LEO (200-2000km)<br/>
+                    <strong style="font-size: 16px;">TARGET: 1,200+ satellites</strong>
+                </div>
+            </div>
+
+            <div class="orbit-stats">
+                <div class="orbit-stat-card">
+                    <div class="icon-large">📊</div>
+                    <h3 style="color: var(--accent-cyan);">Data Volume</h3>
+                    <div style="font-size: 20px; color: var(--text-secondary); margin-top: 10px;">
+                        100+ Exabytes/year<br/>
+                        Highest data generation zone
+                    </div>
+                </div>
+
+                <div class="orbit-stat-card highlight">
+                    <div class="icon-large">⚡</div>
+                    <h3 style="color: var(--accent-lime);">Latency</h3>
+                    <div style="font-size: 20px; color: white; margin-top: 10px;">
+                        20-40ms communication<br/>
+                        Critical for collision warnings
+                    </div>
+                </div>
+
+                <div class="orbit-stat-card">
+                    <div class="icon-large">🎯</div>
+                    <h3 style="color: var(--accent-cyan);">Density</h3>
+                    <div style="font-size: 20px; color: var(--text-secondary); margin-top: 10px;">
+                        500+ active constellations<br/>
+                        Highest collision risk zone
+                    </div>
+                </div>
+
+                <div class="orbit-stat-card" style="border: 2px solid rgba(251, 146, 60, 0.3); background: rgba(251, 146, 60, 0.05);">
+                    <div class="icon-large">💰</div>
+                    <h3 style="color: var(--accent-orange);">Cost Problem</h3>
+                    <div style="font-size: 20px; color: var(--text-secondary); margin-top: 10px;">
+                        Ground delays = $100K+/month wasted bandwidth
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner banner-lime" style="margin-top: 40px;">
+            Why LEO? Highest satellite density + critical latency needs + storage gap | Zorepad fills the on-orbit cache layer
+        </div>
+    </section>
+
+    <!-- SLIDE 14: THANK YOU -->
+    <section class="slide" id="slide-14">
+        <h1 style="font-size: 80px; color: var(--accent-cyan);" class="glow-cyan">THANK YOU!</h1>
+        <div style="font-size: 40px; color: var(--text-secondary); margin-bottom: 20px;">Questions & Discussion</div>
+
+        <div class="emoji-line float-animation">🚀 🛰️ 💫 🌍 ✨</div>
+
+        <div class="glass-card" style="padding: 40px; text-align: center; max-width: 800px;">
+            <div style="font-size: 24px; color: var(--text-secondary); line-height: 2;">
+                📧 <strong style="color: var(--accent-cyan);">contact@zorepad.space</strong><br/>
+                🔗 <strong style="color: var(--accent-lime);">zorepad.space</strong><br/>
+                💬 <strong style="color: var(--accent-orange);">discord.gg/zorepad</strong><br/>
+                🐙 <strong style="color: var(--accent-cyan);">github.com/Felicitas12/ACTINSPACE-2026-Zorepad</strong>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <div style="font-size: 20px; color: var(--text-secondary);">ActInSpace 2026 | Built on 18 CNES Patents | Ready for Commercialization</div>
+            <div style="font-size: 18px; color: var(--text-muted); margin-top: 15px;">
+                Oksana Kolisnyk - Illia Zhurbenko - Illia Maksymenko - Anton Rudakovskyi
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight - windowHeight;
+            const scrolled = window.scrollY;
+            const progress = (scrolled / documentHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
