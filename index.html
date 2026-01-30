@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOREPAD - On-Orbit Storage for LEO Satellites</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-base: #0a0e27;
+            --bg-elevated: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --accent-cyan: #38bdf8;
+            --accent-lime: #00FF41;
+            --accent-orange: #fb923c;
+            --accent-red: #ef4444;
+            --accent-gold: #fbbf24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 120px;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: bold;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .glow-cyan {
+            text-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
+        }
+
+        .glow-lime {
+            text-shadow: 0 0 40px rgba(0, 255, 65, 0.6);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(56, 189, 248, 0.2);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-lime), var(--accent-orange));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 40px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .icon-large {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .card-content {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .banner {
+            width: 100%;
+            max-width: 1400px;
+            padding: 20px 40px;
+            border-radius: 16px;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .circuit-pattern {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(148, 163, 184, 0.05) 35px, rgba(148, 163, 184, 0.05) 36px),
+                repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(148, 163, 184, 0.05) 35px, rgba(148, 163, 184, 0.05) 36px);
+        }
+
+        .tag-box {
+            display: inline-block;
+            padding: 12px 24px;
+            border: 2px solid var(--accent-lime);
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-lime);
+            margin: 30px 0;
+        }
+
+        .stat-number {
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-sublabel {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        #slide-1 {
+            background: linear-gradient(rgba(10, 14, 39, 0.85), rgba(10, 14, 39, 0.85)), 
+                        url('https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1920&h=1080&fit=crop') center/cover;
+        }
+
+        #slide-8 {
+            background: linear-gradient(rgba(10, 14, 39, 0.85), rgba(10, 14, 39, 0.85)), 
+                        url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop') center/cover;
+        }
+
+        .two-col {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            max-width: 1600px;
+            margin-top: 40px;
+        }
+
+        .patent-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 255, 65, 0.15);
+            border: 1px solid var(--accent-lime);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--accent-lime);
+            margin: 5px 0;
+        }
+
+        .highlight-box {
+            padding: 30px;
+            border-radius: 16px;
+            border: 2px solid;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 1400px) {
+            .slide { padding: 60px 80px; }
+            h1 { font-size: 56px; }
+            h2 { font-size: 42px; }
+        }
+
+        @media (max-width: 1200px) {
+            .slide { padding: 40px 60px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .two-col { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- SLIDE 1: TITLE -->
+    <section class="slide" id="slide-1">
+        <div style="font-size: 48px; margin-bottom: 20px;">🛰️</div>
+        <h1 style="color: var(--accent-cyan);" class="glow-cyan">ZOREPAD</h1>
+        <div class="subtitle">On-Orbit Storage Cache for LEO Satellites</div>
+        <div class="tag-box">6 Core CNES Patents | ActInSpace 2026</div>
+        <div style="position: absolute; bottom: 40px; font-size: 18px; color: var(--text-muted); text-align: center;">
+            Oksana Kolisnyk • Illia Zhurbenko • Illia Maksymenko<br/>
+            January 2026
+        </div>
+    </section>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <section class="slide circuit-pattern" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-orange);">⚠️ THE BANDWIDTH BOTTLENECK</h2>
+        <div class="subtitle">LEO Satellites Can't Transmit All Their Data</div>
+        
+        <div class="grid-2">
+            <div class="glass-card" style="border: 2px solid rgba(251, 146, 60, 0.4); background: rgba(251, 146, 60, 0.05);">
+                <div class="icon-large" style="color: var(--accent-orange);">📊</div>
+                <h3 class="card-title" style="color: var(--accent-orange);">Data Generation vs Downlink</h3>
+                <div class="card-content" style="font-size: 22px;">
+                    <strong>Imaging satellites generate:</strong> 200-500 GB/day<br/><br/>
+                    <strong>Ground station downlink:</strong> 100 Mbps × 15 min pass = 45 GB<br/><br/>
+                    <strong style="color: var(--accent-red); font-size: 28px;">GAP: 200+ GB/day overflow</strong>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+                <div class="icon-large" style="color: var(--accent-red);">💾</div>
+                <h3 class="card-title" style="color: var(--accent-red);">Onboard Storage Full</h3>
+                <div class="card-content" style="font-size: 22px;">
+                    <strong>Typical satellite storage:</strong> 128-256 GB<br/><br/>
+                    <strong>Problem:</strong> Fills up in 1-2 days<br/><br/>
+                    <strong style="color: var(--accent-orange); font-size: 28px;">Must delete data or stop imaging</strong>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.05);">
+                <div class="icon-large" style="color: var(--accent-cyan);">⏱️</div>
+                <h3 class="card-title" style="color: var(--accent-cyan);">Time-Critical Delays</h3>
+                <div class="card-content" style="font-size: 22px;">
+                    <strong>Ground station passes:</strong> 4-6 times/day<br/><br/>
+                    <strong>Delay to access data:</strong> 2-8 hours<br/><br/>
+                    <strong style="color: var(--accent-lime); font-size: 28px;">Need: <1 min LEO-to-LEO</strong>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.05);">
+                <div class="icon-large" style="color: var(--accent-lime);">✅</div>
+                <h3 class="card-title" style="color: var(--accent-lime);">Solution Needed</h3>
+                <div class="card-content" style="font-size: 22px;">
+                    <strong>Off-satellite cache storage</strong><br/><br/>
+                    → Always accessible in orbit<br/>
+                    → Fast LEO-to-LEO transfer<br/>
+                    → Overflow buffer for bandwidth-starved satellites
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); border: 2px solid var(--accent-orange);">
+            <strong>SOURCE:</strong> Planet Labs public docs (data rates) | ESA documentation (ground station coverage)
+        </div>
+    </section>
+
+    <!-- SLIDE 3: WHY NOT GROUND STATIONS? -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">❓ WHY NOT JUST BUILD MORE GROUND STATIONS?</h2>
+
+        <div class="two-col">
+            <div class="glass-card" style="flex: 1; border: 2px solid rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+                <div class="icon-large" style="color: var(--accent-red);">🌍</div>
+                <h3 style="color: var(--accent-red); font-size: 32px; margin-bottom: 20px;">Ground Station Limits</h3>
+                <div style="font-size: 20px; color: var(--text-secondary); line-height: 2;">
+                    <strong>Coverage:</strong> Any ground station sees a LEO satellite only 10-15% of orbit time<br/><br/>
+                    
+                    <strong>Cost to fix:</strong> Need 20+ globally distributed stations = <span style="color: var(--accent-red); font-weight: bold;">$100M+ capex + $10M/year ops</span><br/><br/>
+                    
+                    <strong>Latency:</strong> Data must go Sat A → Ground → Sat B = 2-8 hours delay<br/><br/>
+                    
+                    <strong style="color: var(--accent-red); font-size: 24px;">Still doesn't solve the core problem</strong>
+                </div>
+            </div>
+
+            <div class="glass-card" style="flex: 1; border: 2px solid rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.05);">
+                <div class="icon-large" style="color: var(--accent-lime);">🛰️</div>
+                <h3 style="color: var(--accent-lime); font-size: 32px; margin-bottom: 20px;">On-Orbit Hub Wins</h3>
+                <div style="font-size: 20px; color: white; line-height: 2;">
+                    <strong>Coverage:</strong> LEO-to-LEO communication = <span style="color: var(--accent-lime); font-weight: bold;">80-90% orbit visibility</span><br/><br/>
+                    
+                    <strong>Cost:</strong> Single $650K CubeSat vs $100M+ ground network<br/><br/>
+                    
+                    <strong>Latency:</strong> <1 min direct LEO-to-LEO link<br/><br/>
+                    
+                    <strong>Use case:</strong> Temporary cache for overflow data + fast satellite-to-satellite sharing<br/><br/>
+                    
+                    <strong style="color: var(--accent-lime); font-size: 24px;">150x cheaper, 10x faster access</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(0, 255, 65, 0.15); color: var(--accent-lime); border: 2px solid var(--accent-lime);">
+            <strong>VERDICT:</strong> On-orbit storage is NOT a replacement for ground stations. It's a complementary cache layer. <strong>Example:</strong> Starlink uses laser inter-satellite links for same reason — avoid ground bottlenecks.
+        </div>
+    </section>
+
+    <!-- SLIDE 4: THE SOLUTION -->
+    <section class="slide circuit-pattern" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-lime);" class="glow-lime">✨ ZOREPAD: 2TB CACHE IN ORBIT</h2>
+        <div class="subtitle">6U CubeSat + 6 Core CNES Patents</div>
+
+        <div class="grid-3">
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">💾</div>
+                <h3 style="color: var(--accent-cyan);">Hardware Core</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    <strong>Novachips NN765R 2TB SSD</strong><br/>
+                    → Radiation-hardened (MIL-STD-810G)<br/>
+                    → Proven: Mars rovers, ISS<br/>
+                    → 3 GB/s, <3W power<br/><br/>
+                    
+                    <strong>6U CubeSat platform (12 kg)</strong><br/>
+                    → Standard bus (NASA/ESA/Planet Labs use it)<br/>
+                    → LEO 500-800 km orbit<br/>
+                    → 5-year lifetime
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.05);">
+                <div class="icon-large" style="color: var(--accent-lime);">🤖</div>
+                <h3 style="color: var(--accent-lime);">6 Core Patents</h3>
+                <div style="font-size: 18px; color: white; line-height: 1.8; margin-top: 15px;">
+                    <strong>B2203:</strong> Autonomous collision avoidance (no ground control needed)<br/><br/>
+                    <strong>B1349:</strong> Data confidence scoring (0-100% quality)<br/><br/>
+                    <strong>B0818:</strong> Smart compression (30% bandwidth savings)<br/><br/>
+                    <strong>B0805:</strong> Agile antennas (24/7 uplink/downlink)<br/><br/>
+                    <strong>B1629:</strong> Anti-spoofing (GPS verification)<br/><br/>
+                    <strong>B0812:</strong> Ground station mesh network
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-orange);">🎯</div>
+                <h3 style="color: var(--accent-orange);">Use Case</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    <strong>Problem:</strong> Planet Labs satellite generates 300 GB/day but can only downlink 45 GB per pass.<br/><br/>
+                    
+                    <strong>Solution:</strong> Upload overflow 255 GB to Zorepad Hub. Retrieve when ground station ready.<br/><br/>
+                    
+                    <strong>Benefit:</strong> Never delete data. Always accessible. <1 min LEO-to-LEO transfer.
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3);">
+            <strong>COST:</strong> $650K per CubeSat (Bus $260K + Storage $80K + Antennas $120K + Solar $90K + Integration $100K) | Cheaper than 1 ground station ($5M)
+        </div>
+    </section>
+
+    <!-- SLIDE 5: CUSTOMERS & MARKET -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">🎯 WHO WILL PAY FOR THIS?</h2>
+
+        <div class="grid-3">
+            <div class="glass-card" style="border: 2px solid rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.05);">
+                <div class="icon-large" style="color: var(--accent-lime);">🏢</div>
+                <h3 style="color: var(--accent-lime);">PRIMARY: European Agencies</h3>
+                <div style="font-size: 18px; color: white; line-height: 1.8; margin-top: 15px;">
+                    <strong>CNES (France), ESA (Europe)</strong><br/><br/>
+                    
+                    → We use THEIR patents (6 CNES patents)<br/>
+                    → They fund TRL 3-5 demos (€150-300K grants)<br/>
+                    → No ITAR compliance needed<br/>
+                    → They want to commercialize their IP<br/><br/>
+                    
+                    <strong style="color: var(--accent-lime);">Entry: ActInSpace → ESA pilot contract</strong>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">🌍</div>
+                <h3 style="color: var(--accent-cyan);">SECONDARY: Imaging Operators</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    <strong>Planet Labs (EU ops), Airbus Defence, Maxar</strong><br/><br/>
+                    
+                    <strong>Pain:</strong> 200-500 GB/day overflow<br/><br/>
+                    
+                    <strong>Pitch:</strong> "$0.05/GB/mo to cache in orbit. Retrieve when ready."<br/><br/>
+                    
+                    <strong>Entry:</strong> Pilot after ESA validation (Year 2)
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05);">
+                <div class="icon-large" style="color: var(--accent-red);">⚠️</div>
+                <h3 style="color: var(--accent-red);">NOT YET: US Constellations</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    <strong>Starlink, Kuiper, OneWeb (US ops)</strong><br/><br/>
+                    
+                    <strong style="color: var(--accent-red);">BLOCKER: ITAR compliance</strong><br/><br/>
+                    
+                    US companies can't share space tech without export license.<br/><br/>
+                    
+                    <strong>Timeline:</strong> Year 3 after US subsidiary + ITAR license
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; display: flex; gap: 40px; max-width: 1400px;">
+            <div class="glass-card" style="flex: 1;">
+                <div style="text-align: center;">
+                    <div class="stat-number" style="color: var(--accent-cyan);">9,000+</div>
+                    <div class="stat-label">Active LEO Satellites</div>
+                    <div class="stat-sublabel">Source: ESA, Jan 2026</div>
+                </div>
+            </div>
+            <div class="glass-card" style="flex: 1;">
+                <div style="text-align: center;">
+                    <div class="stat-number" style="color: var(--accent-orange);">$8.2B</div>
+                    <div class="stat-label">LEO Data Services by 2030</div>
+                    <div class="stat-sublabel">Source: NSR 2025</div>
+                </div>
+            </div>
+            <div class="glass-card" style="flex: 1;">
+                <div style="text-align: center;">
+                    <div class="stat-number" style="color: var(--accent-lime);">200-500</div>
+                    <div class="stat-label">GB/day per Satellite</div>
+                    <div class="stat-sublabel">Source: Planet Labs</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); border: 2px solid var(--accent-orange);">
+            <strong>REALISTIC ENTRY:</strong> European startup → European customers first (CNES/ESA). US market = Year 3 after ITAR.
+        </div>
+    </section>
+
+    <!-- SLIDE 6: FINANCIALS -->
+    <section class="slide circuit-pattern" style="background-color: var(--bg-base);">
+        <h2 style="color: var(--accent-lime);">💵 FINANCIALS: CONSERVATIVE ESTIMATE</h2>
+
+        <div class="two-col">
+            <div style="flex: 1;">
+                <h3 style="color: var(--accent-cyan); margin-bottom: 20px; font-size: 32px;">YEAR 1 (2026)</h3>
+                
+                <div class="glass-card" style="background: rgba(0, 255, 65, 0.05); border: 2px solid rgba(0, 255, 65, 0.3);">
+                    <div style="font-size: 24px; color: var(--accent-lime); margin-bottom: 15px; font-weight: bold;">REVENUE: $258K</div>
+                    <div style="font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        • Storage: $60K (2 pilots @ $2,500/mo × 50 TB)<br/>
+                        • Collision API: $48K (2 customers @ $2K/mo)<br/>
+                        • ESA grant: $150K (pilot demonstration)
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-top: 30px; background: rgba(239, 68, 68, 0.05); border: 2px solid rgba(239, 68, 68, 0.3);">
+                    <div style="font-size: 24px; color: var(--accent-red); margin-bottom: 15px; font-weight: bold;">COSTS: $994K</div>
+                    <div style="font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        • <strong style="color: var(--accent-orange);">CubeSat: $650K</strong> (one-time capex)<br/>
+                        • Ground stations: $60K<br/>
+                        • Cloud: $24K<br/>
+                        • Team (3 part-time): $180K<br/>
+                        • Patents: $30K<br/>
+                        • R&D: $50K
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: rgba(251, 146, 60, 0.1); border-radius: 12px; border: 1px solid rgba(251, 146, 60, 0.3);">
+                    <div style="font-size: 28px; color: var(--accent-orange); font-weight: bold; text-align: center;">
+                        NET YEAR 1: -$736K
+                    </div>
+                    <div style="font-size: 16px; color: var(--text-muted); margin-top: 10px; text-align: center;">
+                        (Satellite capex dominates. Y2+ = pure software margins)
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex: 1;">
+                <h3 style="color: var(--accent-cyan); margin-bottom: 20px; font-size: 32px;">YEAR 2-3 GROWTH</h3>
+
+                <div class="glass-card">
+                    <div style="font-size: 24px; color: var(--accent-cyan); margin-bottom: 20px; font-weight: bold;">Year 2: $420K Revenue</div>
+                    <div style="font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        • 5 customers @ avg $7K/mo<br/>
+                        • Costs: $250K (no satellite)<br/>
+                        • <strong style="color: var(--accent-lime);">Net: +$170K profit</strong>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-top: 30px;">
+                    <div style="font-size: 24px; color: var(--accent-lime); margin-bottom: 20px; font-weight: bold;">Year 3: $1.2M Revenue</div>
+                    <div style="font-size: 18px; color: var(--text-secondary); line-height: 2;">
+                        • 12 customers @ avg $10K/mo<br/>
+                        • Costs: $300K<br/>
+                        • <strong style="color: var(--accent-lime);">Net: +$900K profit</strong>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: rgba(56, 189, 248, 0.1); border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.3);">
+                    <div style="font-size: 16px; color: var(--text-secondary); line-height: 1.8;">
+                        <strong style="color: var(--accent-cyan);">Key assumptions:</strong><br/>
+                        • Pricing: $0.05/GB/mo (AWS S3 = $0.023, but we're in space)<br/>
+                        • Customer pays for storage, we handle hardware<br/>
+                        • Hardware capex in Y1, then pure software margins<br/>
+                        • Conservative growth (not modeling Starlink scale)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(0, 255, 65, 0.15); color: var(--accent-lime); border: 2px solid var(--accent-lime);">
+            <strong>REALITY CHECK:</strong> Year 1 is negative (satellite capex). Software margins kick in Year 2+. One satellite serves multiple customers for 5 years.
+        </div>
+    </section>
+
+    <!-- SLIDE 7: WHAT WE HAVE NOW -->
+    <section class="slide" style="background-color: var(--bg-elevated);">
+        <h2 style="color: var(--accent-cyan);">⚡ WHAT WE HAVE NOW</h2>
+
+        <div class="grid-3">
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">💻</div>
+                <h3 style="color: var(--accent-cyan);">Software Prototype</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    <strong>✅ Working code:</strong><br/>
+                    • C# .NET 8 backend<br/>
+                    • PostgreSQL + PostGIS (TLE data)<br/>
+                    • MinIO storage<br/>
+                    • Docker deployment<br/><br/>
+                    
+                    <strong>✅ 6 patents implemented:</strong><br/>
+                    • B2203: Collision algorithm<br/>
+                    • B1349: Confidence scoring<br/>
+                    • B0818: Compression<br/><br/>
+                    
+                    <strong>GitHub:</strong><br/>
+                    github.com/Felicitas12/<br/>ACTINSPACE-2026-Zorepad
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.05);">
+                <div class="icon-large" style="color: var(--accent-lime);">🎬</div>
+                <h3 style="color: var(--accent-lime);">Live Demo</h3>
+                <div style="font-size: 18px; color: white; line-height: 1.8; margin-top: 15px;">
+                    <strong style="font-size: 24px;">demo.zorepad.space</strong><br/><br/>
+                    
+                    ✅ REST API sandbox<br/>
+                    ✅ Collision dashboard (B2203)<br/>
+                    ✅ Quality scoring (B1349)<br/>
+                    ✅ TLE data ingestion<br/><br/>
+                    
+                    <strong>Credentials:</strong><br/>
+                    actinspace2026 / [judges]<br/><br/>
+                    
+                    <div style="padding: 15px; background: rgba(0, 255, 65, 0.1); border-radius: 8px; margin-top: 15px;">
+                        <strong>What this proves:</strong> Concept works. Algorithms functional. APIs ready.
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-orange);">🛰️</div>
+                <h3 style="color: var(--accent-orange);">Hardware Design</h3>
+                <div style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-top: 15px;">
+                    <strong>✅ What we have:</strong><br/>
+                    • Component selection (Novachips, ARM A72)<br/>
+                    • Power budget (38W avg, 100W solar)<br/>
+                    • Mass budget (12 kg)<br/>
+                    • CAD model (conceptual)<br/><br/>
+                    
+                    <strong style="color: var(--accent-red);">❌ What we DON'T have:</strong><br/>
+                    • Physical prototype<br/>
+                    • Thermal-vacuum testing<br/>
+                    • Radiation testing<br/><br/>
+                    
+                    <strong style="color: var(--accent-cyan);">Need: €500K for TRL 4-5</strong><br/>
+                    (Build + test prototype)
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3);">
+            <strong>CURRENT STATUS:</strong> Concept validated (software working). Hardware designed (not built). Timeline: 18 months to launch with ESA support.
+        </div>
+    </section>
+
+    <!-- SLIDE 8: CALL TO ACTION -->
+    <section class="slide" id="slide-8">
+        <h1 style="color: var(--accent-cyan); font-size: 64px;" class="glow-cyan">🚀 WHAT WE NEED</h1>
+
+        <div class="grid-2">
+            <div class="glass-card" style="border: 2px solid rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.05);">
+                <div class="icon-large" style="color: var(--accent-lime);">💰</div>
+                <h3 style="color: var(--accent-lime); font-size: 32px;">SEED FUNDING</h3>
+                <div style="font-size: 20px; color: white; line-height: 2; margin-top: 15px;">
+                    <strong>€500K - €1M</strong><br/><br/>
+                    
+                    <strong>Use of funds:</strong><br/>
+                    • Build physical prototype (€200K)<br/>
+                    • Thermal-vacuum testing (€100K)<br/>
+                    • Radiation testing (€50K)<br/>
+                    • Patent licensing (€30K)<br/>
+                    • Team expansion (€120K)<br/><br/>
+                    
+                    <strong style="color: var(--accent-lime);">Timeline:</strong> 18 months to launch
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="icon-large" style="color: var(--accent-cyan);">🏢</div>
+                <h3 style="color: var(--accent-cyan); font-size: 32px;">PARTNERS</h3>
+                <div style="font-size: 20px; color: var(--text-secondary); line-height: 2; margin-top: 15px;">
+                    <strong>CNES/ESA:</strong><br/>
+                    → Patent licensing agreement<br/>
+                    → Pilot demonstration contract<br/>
+                    → Ground station access<br/><br/>
+                    
+                    <strong>Imaging operators:</strong><br/>
+                    → Beta testing partnership<br/>
+                    → Letters of Intent (LOIs)<br/><br/>
+                    
+                    <strong>Launch provider:</strong><br/>
+                    → ESA rideshare program
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 60px; max-width: 1200px;">
+            <div class="glass-card" style="text-align: center; padding: 50px;">
+                <div style="font-size: 32px; color: white; margin-bottom: 20px; font-weight: bold;">
+                    📧 contact@zorepad.space
+                </div>
+                <div style="font-size: 20px; color: var(--text-secondary); margin-bottom: 30px;">
+                    💬 discord.gg/zorepad | 🔗 zorepad.space<br/>
+                    🐙 github.com/Felicitas12/ACTINSPACE-2026-Zorepad
+                </div>
+                <div style="font-size: 18px; color: var(--text-muted); margin-top: 30px;">
+                    Oksana Kolisnyk • Illia Zhurbenko • Illia Maksymenko<br/>
+                    ActInSpace 2026 | Built on CNES Patents
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" style="background: rgba(0, 255, 65, 0.15); color: var(--accent-lime); border: 2px solid var(--accent-lime); margin-top: 40px;">
+            <strong>NEXT STEP:</strong> Win ActInSpace → Secure ESA pilot contract → Build prototype → Launch in 18 months
+        </div>
+    </section>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlideIndex = 0;
+        let isNavigating = false;
+
+        // Progress bar
+        function updateProgressBar() {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight - windowHeight;
+            const scrolled = window.scrollY;
+            const progress = (scrolled / documentHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        window.addEventListener('scroll', updateProgressBar);
+
+        // Get current slide index based on scroll position
+        function getCurrentSlideIndex() {
+            const scrollPosition = window.scrollY + window.innerHeight / 2;
+            for (let i = 0; i < slides.length; i++) {
+                const slide = slides[i];
+                const slideTop = slide.offsetTop;
+                const slideBottom = slideTop + slide.offsetHeight;
+                if (scrollPosition >= slideTop && scrollPosition < slideBottom) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        // Navigate to specific slide
+        function navigateToSlide(index) {
+            if (index < 0 || index >= totalSlides || isNavigating) return;
+            
+            isNavigating = true;
+            currentSlideIndex = index;
+            slides[index].scrollIntoView({ behavior: 'smooth' });
+            
+            setTimeout(() => {
+                isNavigating = false;
+            }, 800);
+        }
+
+        // Wheel navigation (mouse scroll)
+        let wheelTimeout;
+        window.addEventListener('wheel', (e) => {
+            if (isNavigating) return;
+            
+            clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => {
+                currentSlideIndex = getCurrentSlideIndex();
+                
+                if (e.deltaY > 0) {
+                    // Scroll down
+                    navigateToSlide(currentSlideIndex + 1);
+                } else if (e.deltaY < 0) {
+                    // Scroll up
+                    navigateToSlide(currentSlideIndex - 1);
+                }
+            }, 50);
+        }, { passive: true });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (isNavigating) return;
+            
+            currentSlideIndex = getCurrentSlideIndex();
+            
+            if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                navigateToSlide(currentSlideIndex + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                navigateToSlide(currentSlideIndex - 1);
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                navigateToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                navigateToSlide(totalSlides - 1);
+            }
+        });
+
+        // Touch swipe support for mobile
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            if (isNavigating) return;
+            
+            touchEndY = e.changedTouches[0].screenY;
+            currentSlideIndex = getCurrentSlideIndex();
+            
+            const swipeThreshold = 50;
+            if (touchStartY - touchEndY > swipeThreshold) {
+                navigateToSlide(currentSlideIndex + 1);
+            } else if (touchEndY - touchStartY > swipeThreshold) {
+                navigateToSlide(currentSlideIndex - 1);
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>
